@@ -1,6 +1,8 @@
 package dt.core;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -23,10 +25,28 @@ public class DecisionTreeLearner extends AbstractDecisionTreeLearner {
 	
 	/**
 	 * Main recursive decision-tree learning (ID3) method.  
+	 * Pseudo-code from AIMA Figure 18.5 Page 702
 	 */
 	@Override
 	protected DecisionTree learn(Set<Example> examples, List<Variable> attributes, Set<Example> parent_examples) {
 	    // Must be implemented by you; the following two methods may be useful
+		if (examples.size()==0) {
+			return new DecisionTree(this.pluralityValue(parent_examples));
+		} else if (this.uniqueOutputValue(examples)!=null) {
+			return new DecisionTree(this.uniqueOutputValue(examples));
+		} else if (attributes.isEmpty()) {
+			return new DecisionTree(this.pluralityValue(examples));
+		} else {
+			Variable A = this.mostImportantVariable(attributes, examples);
+			DecisionTree tree = new DecisionTree(A);
+			for (String vk : A.domain) {
+				Set<Example> exs = null; //?
+				attributes.remove(A);
+				DecisionTree subtree = learn(exs, attributes, examples);
+				tree.children.add(subtree);
+			}
+			return tree;
+		}
 	}
 	
 	/**
@@ -37,6 +57,14 @@ public class DecisionTreeLearner extends AbstractDecisionTreeLearner {
 	@Override
 	protected String pluralityValue(Set<Example> examples) {
 	    // Must be implemented by you
+		ArrayList<String> outputValues = new ArrayList<String>();
+		for (Example e : examples) {
+			outputValues.add(e.getOutputValue());
+		}
+		HashMap<String, Integer> hash = new HashMap<String, Integer>();
+		for (String s : outputValues) {
+			
+		}
 	}
 	
 	/**
@@ -58,6 +86,8 @@ public class DecisionTreeLearner extends AbstractDecisionTreeLearner {
 	@Override
 	protected Set<Example> examplesWithValueForAttribute(Set<Example> examples, Variable a, String vk) {
 	    // Must be implemented by you
+		Set<Example> exs = new HashSet<Example>();
+		for (Example e : )
 	}
 	
 	/**
